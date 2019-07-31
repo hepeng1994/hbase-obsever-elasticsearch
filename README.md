@@ -58,3 +58,25 @@ desc 'test_record'
 **hbase-river插件之前下载了源代码看了下，hbase-river插件是周期性的scan整张表进行bulk操作，而我们这里自己写的这个组件呢，是基于hbase的触发事件来进行的，两者的效果和性能不言而喻，一个是全量的，一个是增量的，我们在实际的开发中，肯定是希望如果有数据更新了或者删除了，我们只要对着部分数据进行同步就行了，没有修改或者删除的数据，我们可以不用去理会。 **
 
 Timer和 ScheduledExecutorService，在这里我选择了ScheduledExecutorService，2shou之前提到过部署插件有个坑，修改Java代码后，上传到HDFS的jar包文件必须和之前不一样，否则就算卸载掉原有的coprocessor再重新安装也不能生效，这个坑我也碰到了，就是因为没有复写stop方法，将定时任务停掉，线程一直会挂在那里，而且一旦报错将会导致hbase无法启动，必须要kill掉相应的线程。这个坑，坑了我一段时间，大家千万要注意，一定记得要复写stop方法，关闭之前打开的线程或者客户端，这样才是最好的方式。
+
+
+
+因为代码有问题在enable 'test_record' 阶段hbase会挂掉
+此时就算重启hbase也不行
+在hbase-site.xml文件
+添加
+
+ <property>
+    <name>hbase.coprocessor.abortonerror</name>
+    <value>false</value>
+    </property>
+<property>  
+   <name>hbase.table.sanity.checks</name>  
+   <value>false</value>  
+</property>  
+
+然后重启bbase,  解绑 协处理器,就可以了,
+
+
+还有一个问题解绑后请将上边两个配置删除在重启hbase
+如果上边两个参数在,即使协处理器错误,也不会报错,相当于没有反应,所以在测试阶段请将上边两个参数去掉,生产阶段打开
