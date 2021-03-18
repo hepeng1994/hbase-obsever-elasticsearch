@@ -20,7 +20,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <elasticsearch.version>6.3.2</elasticsearch.version>
+        <elasticsearch.version>7.11.2</elasticsearch.version>
         <hbase-server.version>1.1.2</hbase-server.version>
         <maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
         <commons-logging.version>1.2</commons-logging.version>
